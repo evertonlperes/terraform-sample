@@ -89,14 +89,11 @@ resource "aws_instance" "dev-node" {
   }
 
   provisioner "local-exec" {
-    command = templatefile("unix-ssh-config.tpl", {
+    command = templatefile("${var.host_os}-ssh-config.tpl", {
       hostname     = self.public_ip,
       user         = "ubuntu",
       identityfile = "~/.ssh/mtckey"
     })
-    interpreter = [
-      "bash",
-      "-c"
-    ]
+    interpreter = var.host_os == "windows" ? ["Powershell", "-Command"] : ["bash", "-c"]
   }
 }
